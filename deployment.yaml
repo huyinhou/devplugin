@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-test
+spec:
+  selector:
+    matchLabels:
+      app: dev-test
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dev-test
+    spec:
+      containers:
+      - name: container1
+        image: debian:buster
+        command:
+        - sleep
+        - infinity
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+            memory: 20Mi
+            example.com/resource: 1
+          limits:
+            cpu: 50m
+            memory: 20Mi
+            example.com/resource: 1
+

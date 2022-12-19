@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: devplugin
+  namespace: kube-system
+spec:
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: devplugin
+  template:
+    metadata:
+      labels:
+        name: devplugin
+    spec:
+      containers:
+      - image: huyinhou/devplugin:v1
+        imagePullPolicy: Always
+        name: devplugin
+        command:
+        - plugin
+        args:
+        - -count=1000
+        env:
+        - name: PLUGIN_SOCK_DIR
+          value: /var/lib/kubelet/device-plugins
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /var/lib/kubelet/device-plugins
+          name: device-plugin
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+      - hostPath:
+          path: /var/lib/kubelet/device-plugins
+          type: ""
+        name: device-plugin
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
